@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { Form, Button, Alert } from 'react-bootstrap';
 
+//import login user mutation and auth
 import { LOGIN_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
+  //login mutation
   const [login] = useMutation(LOGIN_USER)
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -28,10 +30,12 @@ const LoginForm = () => {
     }
 
     try {
+      //if credentials are correct login and return data
       const {data} = await login({
         variables: {...userFormData}
       })
-      console.log(data)
+
+      //Store token in local storage
       Auth.login(data.login.token)
     } catch (err) {
       console.error(err);

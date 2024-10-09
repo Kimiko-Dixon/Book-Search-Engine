@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState} from 'react';
 import { useMutation,useQuery } from '@apollo/client';
 import {
   Container,
@@ -9,11 +9,12 @@ import {
   Row
 } from 'react-bootstrap';
 
+//import auth, get me query, the save book mutation, and the search Google books
 import Auth from '../utils/auth';
 import {GET_ME} from '../utils/queries'
 import {SAVE_BOOK} from '../utils/mutations'
 import { searchGoogleBooks } from '../utils/API';
-import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+// import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -21,27 +22,11 @@ const SearchBooks = () => {
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
   const [saveBook] = useMutation(SAVE_BOOK)
+
+  //get current user's information
+  const {data} = useQuery(GET_ME)
   // create state to hold saved bookId values
-  const {loading, data} = useQuery(GET_ME)
-  /* if(loading){
-    console.log('loading')
-  }
-  if(!loading){
-    console.log(data?.me?.savedBooks.map(book => book.bookId))
-  } */
-  // const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds())
   const [savedBookIds, setSavedBookIds] = useState(data?.me?.savedBooks.map(book => book.bookId) || []);
-
-  // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
-  // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
-
-  /* useEffect(() => {
-    return () => saveBookIds(savedBookIds);
-  }); */
-  
- /*  useEffect(() => {
-    return () => setSavedBookIds(savedBookIds);
-  },[savedBookIds]) */
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
@@ -88,6 +73,7 @@ const SearchBooks = () => {
     }
 
     try {
+      //Save the book into the savedBook array of the user
       await saveBook({
         variables:{book:{...bookToSave}}
       })

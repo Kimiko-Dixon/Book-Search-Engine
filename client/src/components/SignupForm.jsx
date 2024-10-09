@@ -30,9 +30,12 @@ const SignupForm = () => {
     }
 
     try {
+      //create a new user
       const {data} = await signup({
         variables:{...userFormData}
       })
+
+      //Store token in local storage
       Auth.login(data.createUser.token)
     } catch (err) {
       console.error(err);
